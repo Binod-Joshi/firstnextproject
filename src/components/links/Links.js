@@ -1,40 +1,72 @@
-import Link from "next/link";
+"use client";
+import { useState } from "react";
+import styles from "./links.module.css";
+import NavLink from "./navlink/Navlink";
+import Image from "next/image";
+import { handleGithubLogout } from "@/lib/action";
 
-const Links = () => {
+const Links = ({ session }) => {
+  const links = [
+    {
+      title: "Home",
+      path: "/",
+    },
+    {
+      title: "About",
+      path: "/about",
+    },
+    {
+      title: "Blog",
+      path: "/blog",
+    },
+    {
+      title: "Contact",
+      path: "/contact",
+    },
+  ];
 
-    const links = [
-        {
-            title : "Home",
-            path : "/",
-        },
-        {
-            title : "About",
-            path : "/about"
-        },
-        {
-            title : "Admin",
-            path : "/admin"
-        },
-        {
-            title : "Blog",
-            path : "/blog"
-        },
-        {
-            title : "Contact",
-            path : "/contact"
-        }
-    ]
+  const [open, setOpen] = useState(false);
+  console.log(open);
 
   return (
-    <div>
-    {links.map(link => {
-      return (
-        <Link href={link.path} key={link.path} style={{ display:"flex",flexDirection:"column",textDecoration:"none" }}>{link.title}</Link>
-      );
-    })}
-  </div>
-  
-  )
-}
+    <div className={styles.container}>
+      <div className={styles.links}>
+        {links.map((link) => {
+          return <NavLink item={link} key={link.title} />;
+        })}
 
-export default Links
+        {session?.user ? (
+          <>
+            {session.user?.isAdmin && (
+              <NavLink item={{ title: "Admin", path: "/admin" }} />
+            )}
+            <form action={handleGithubLogout}>
+              <button className={styles.logout}>Logout</button>
+            </form>
+          </>
+        ) : (
+          <NavLink item={{ title: "Login", path: "/login" }} />
+        )}
+      </div>
+      <div>
+        <Image
+          className={styles.menuButton}
+          src="/menu.png"
+          alt=""
+          width={30}
+          height={30}
+          onClick={() => setOpen((prev) => !prev)}
+        />
+        {open && (
+          <div className={styles.mobileLinks}>
+            {links.map((link) => (
+              <NavLink item={link} key={link.title} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Links;

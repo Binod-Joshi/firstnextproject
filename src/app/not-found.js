@@ -2,7 +2,7 @@
 const notfound = () => {
   return (
     <div>
-      <p>not found bro.</p>
+      <p>no page found bro.</p>
     </div>
   )
 }
